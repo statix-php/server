@@ -34,9 +34,11 @@ You can configure the several options with the server, such as the host, the por
 
 ### Passing configuration via the constructor or Server::new()
 
-You may pass most configuration options via the constructor as shown below where we set the `host`, `port` and `root` options. 
+You may pass most configuration options via the constructor. For example we are setting the `host`, `port` and `root` options in the code below. 
 
 ```PHP
+use Statix\Server\Server;
+
 Server::new([
     'host' => 'localhost',
     'port' => 8000,
@@ -50,7 +52,11 @@ new Server([
     'port' => 8000,
     'root' => __DIR__ . '/content'
 ]);
+```
 
+The complete list of configuration items that can be passed via the constructor can be found below. 
+
+```PHP
 $optionsSettableViaContructor = [
     'host' => 'string', // default: localhost
     'port' => 'string|int', // default: 8000
@@ -65,8 +71,10 @@ $optionsSettableViaContructor = [
 
 ### Setting configuration via the named methods
 
+You also have the option of calling named methods to set the configuration options as shown below. 
+
 ```PHP
-use Statix\Server;
+use Statix\Server\Server;
 
 Server::new()
     ->usePHP('path') 
@@ -75,10 +83,8 @@ Server::new()
     ->root('./content')
     ->useRouter('./router.php')
     ->withoutEnvVars([
-        //
-    ])->filterEnvVars(function($value, $key) { 
-        //
-    })
+        'APP_KEY',
+    ]);
 ```
 
 ### Capturing the output from the server process

@@ -10,29 +10,29 @@ class Server
 {
     /**
      * The user passed configuration array
-     * 
-     * @param array $baseConfiguration
+     *
+     * @param  array  $baseConfiguration
      */
     protected $baseConfiguration;
 
     /**
      * The default and user merged configuration array
-     * 
-     * @param array $configuration
+     *
+     * @param  array  $configuration
      */
     protected $configuration;
 
     /**
      * The output handler to pass process output to
-     * 
-     * @param callable $outputHandler
+     *
+     * @param  callable  $outputHandler
      */
     protected $outputHandler;
 
     /**
      * The env vars which will be passed to the server process
-     * 
-     * @param array $envVarsToPass
+     *
+     * @param  array  $envVarsToPass
      */
     protected $envVarsToPass;
 
@@ -46,11 +46,11 @@ class Server
         $this->baseConfiguration = $configuration;
 
         $this->configuration = array_merge($defaults = [
-            'host' => 'localhost', 
-            'port' => 8000, 
-            'root' => getcwd(), 
+            'host' => 'localhost',
+            'port' => 8000,
+            'root' => getcwd(),
             'executable' => null,
-            'router' => null, 
+            'router' => null,
             'withoutEnvVars' => [],
         ], $configuration);
 
@@ -116,11 +116,11 @@ class Server
     public function filterEnvVars(callable $callback): self
     {
         $this->envVarsToPass = array_filter(
-            $this->envVarsToPass, 
-            $callback, 
+            $this->envVarsToPass,
+            $callback,
             ARRAY_FILTER_USE_BOTH
         );
-        
+
         return $this;
     }
 
@@ -129,7 +129,7 @@ class Server
         if ($this->configuration['executable'] != null) {
             return $this->configuration['executable'];
         }
-        
+
         return (new PhpExecutableFinder)->find(false);
     }
 
@@ -147,7 +147,7 @@ class Server
 
     private function buildPassingEnvVarArray(): array
     {
-        return array_filter($this->envVarsToPass, function($key) {
+        return array_filter($this->envVarsToPass, function ($key) {
             return in_array($key, $this->configuration['withoutEnvVars']);
         }, ARRAY_FILTER_USE_KEY);
     }
@@ -163,7 +163,7 @@ class Server
         );
 
         $process->start(function ($type, $buffer) {
-            if($this->outputHandler != null) {
+            if ($this->outputHandler != null) {
                 ($this->outputHandler)($buffer);
             }
         });
