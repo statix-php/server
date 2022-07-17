@@ -114,7 +114,7 @@ class Server
         return $this;
     }
 
-    public function addEnvVars(array $vars): self
+    public function withEnvVars(array $vars): self
     {
         $this->envVarsToPass = array_merge(
             $this->envVarsToPass,
@@ -164,7 +164,7 @@ class Server
     private function buildPassingEnvVarArray(): array
     {
         return array_merge(array_filter($this->envVarsToPass, function ($key) {
-            return in_array($key, $this->configuration['withoutEnvVars']);
+            return !in_array($key, $this->configuration['withoutEnvVars']);
         }, ARRAY_FILTER_USE_KEY), $this->configuration['withEnvVars']);
     }
 
