@@ -51,6 +51,7 @@ class Server
             'root' => getcwd(),
             'executable' => null,
             'router' => null,
+            'withEnvVars' => [],
             'withoutEnvVars' => [],
         ], $configuration);
 
@@ -113,6 +114,16 @@ class Server
         return $this;
     }
 
+    public function addEnvVars(array $vars): self
+    {
+        $this->envVarsToPass = array_merge(
+            $this->envVarsToPass,
+            $vars
+        );
+
+        return $this;
+    }
+
     public function filterEnvVars(callable $callback): self
     {
         $this->envVarsToPass = array_filter(
@@ -152,9 +163,9 @@ class Server
 
     private function buildPassingEnvVarArray(): array
     {
-        return array_filter($this->envVarsToPass, function ($key) {
+        return array_merge(array_filter($this->envVarsToPass, function ($key) {
             return in_array($key, $this->configuration['withoutEnvVars']);
-        }, ARRAY_FILTER_USE_KEY);
+        }, ARRAY_FILTER_USE_KEY), $this->configuration['withEnvVars']);
     }
 
     private function initProcess(): Process
