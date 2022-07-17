@@ -135,14 +135,19 @@ class Server
 
     private function buildServeCommand(): array
     {
-        return [
+        $command = [
             $this->findExecutable(),
             '-S',
             $this->configuration['host'].':'.$this->configuration['port'],
             '-t',
             $this->configuration['root'],
-            $this->configuration['router'],
         ];
+
+        if($this->configuration['router'] != null) {
+            array_push($command, $this->configuration['router']);
+        }
+        
+        return $command;
     }
 
     private function buildPassingEnvVarArray(): array
