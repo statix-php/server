@@ -203,15 +203,11 @@ class Server
         return $process;
     }
 
-    public function start(): self
+    public function start(callable $callback = null): int
     {
         $this->process = $this->initProcess();
 
-        while ($this->process->isRunning()) {
-            continue;
-        }
-
-        return $this;
+        return $this->process->wait();
     }
 
     public function runInBackground(): self
@@ -228,6 +224,8 @@ class Server
         }
 
         $this->process->stop(1);
+
+        $this->running = false;
 
         return [
             $this->process->getExitCode(),
