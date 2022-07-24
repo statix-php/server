@@ -63,8 +63,11 @@ $optionsSettableViaContructor = [
     'root' => 'string', // default: getcwd()
     'router' => 'string', // path to your routing script
     'executable' => 'string', // path to the desired PHP binary to use for the server
+    'withEnvVars' => [
+        'APP_DYNAMIC_ENV' => 'server'
+    ],
     'withoutEnvVars' => [ 
-        'secret' => 'key'
+        'APP_KEY'
     ]
 ];
 ```
@@ -82,14 +85,16 @@ Server::new()
     ->onPort('8080') 
     ->root('./content')
     ->useRouter('./router.php')
-    ->withoutEnvVars([
+    ->withEnvVars([
+        'APP_DYNAMIC_ENV' => 'server'
+    ])->withoutEnvVars([
         'APP_KEY',
     ]);
 ```
 
 ### Capturing the output from the server process
 
-If you want to show the output from the server process as it recieves and handles requests, you may call the `output` method and pass a callback function that will be called and passed any output of the process. One thing to note is that this method will only be called when the process is not running in the background.
+If you want to show the output from the server process as it recieves and handles requests, you may call the `output` method and pass a callback function that will be called and passed any output of the process.
 
 ```PHP
 Server::new()
