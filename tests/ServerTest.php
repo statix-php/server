@@ -1,6 +1,7 @@
 <?php
 
 use Statix\Server\Server;
+use Symfony\Component\Process\Process;
 
 test('it can be created using static method', function () {
     expect(Server::new())->toBeInstanceOf(Server::class);
@@ -10,7 +11,7 @@ test('it can be created using normal constructor', function () {
     expect(new Server)->toBeInstanceOf(Server::class);
 });
 
-// host 
+// host
 test('the default host is localhost', function () {
     expect(Server::new()->getConfiguration()['host'])
         ->toEqual('localhost');
@@ -18,7 +19,7 @@ test('the default host is localhost', function () {
 
 test('the host can be changed via the constructor', function () {
     expect(Server::new([
-        'host' => 'example.test'
+        'host' => 'example.test',
     ])->getConfiguration()['host'])
         ->toEqual('example.test');
 });
@@ -38,7 +39,7 @@ test('the default port is 8000', function () {
 
 test('the port can be changed via the constructor', function () {
     expect(Server::new([
-        'port' => '8080'
+        'port' => '8080',
     ])->getConfiguration()['port'])
     ->toEqual('8080');
 });
@@ -58,7 +59,7 @@ test('the default root is the current working directory', function () {
 
 test('the root can be changed via the constructor', function () {
     expect(Server::new([
-        'root' => './content'
+        'root' => './content',
     ])->getConfiguration()['root'])
         ->toEqual('./content');
 });
@@ -78,7 +79,7 @@ test('the default router is null', function () {
 
 test('the router can be changed via the constructor', function () {
     expect(Server::new([
-        'router' => './tests/resources/router.php'
+        'router' => './tests/resources/router.php',
     ])->getConfiguration()['router'])
         ->toEqual('./tests/resources/router.php');
 });
@@ -91,7 +92,7 @@ test('the router can be changed via named method', function () {
 });
 
 test('an exception is thrown if the router path does not exist', function () {
-    expect(function() {
+    expect(function () {
         return Server::new()
             ->useRouter('./tests/resources/faker-router.php');
     })->toThrow(\Exception::class);
@@ -109,19 +110,32 @@ test('the default withoutEnvVars array is null', function () {
         ->toEqual([]);
 });
 
-// actually run server
+// runInBackground
 test('the runInBackground method works', function () {
     $url = 'http://localhost:8000';
 
-    expect(function() use ($url) {
+    expect(function () use ($url) {
         get($url);
     })->toThrow(\Illuminate\Http\Client\ConnectionException::class);
 
     $server = Server::new([
-        'root' => './tests/resources'
+        'root' => './tests/resources',
     ])->runInBackground();
 
     expect(get($url)->successful())->toBe(true);
 
     $server->stop();
+});
+
+// getProcess
+test('the getProcess method returns null if server has not started', function () {
+    $server = Server::new();
+
+    expect($server->getProcess())->toBe(null);
+});
+
+test('the getProcess method returns a process instance', function () {
+    $server = Server::new()->runInBackground();
+
+    expect($server->getProcess())->toBeInstanceOf(Process::class);
 });

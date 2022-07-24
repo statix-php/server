@@ -38,17 +38,17 @@ class Server
 
     /**
      * Indicator whether or not server is currently running
-     * 
-     * @param bool $running
+     *
+     * @param  bool  $running
      */
     protected bool $running;
 
     /**
      * The running process
-     * 
-     * @param Process $process
+     *
+     * @param  Process  $process
      */
-    protected Process $process;
+    protected $process = null;
 
     public static function new(array $configuration = []): self
     {
@@ -168,17 +168,17 @@ class Server
             $this->configuration['root'],
         ];
 
-        if($this->configuration['router'] != null) {
+        if ($this->configuration['router'] != null) {
             array_push($command, $this->configuration['router']);
         }
-        
+
         return $command;
     }
 
     private function buildPassingEnvVarArray(): array
     {
         return array_merge(array_filter($this->envVarsToPass, function ($key) {
-            return !in_array($key, $this->configuration['withoutEnvVars']);
+            return ! in_array($key, $this->configuration['withoutEnvVars']);
         }, ARRAY_FILTER_USE_KEY), $this->configuration['withEnvVars']);
     }
 
@@ -223,15 +223,15 @@ class Server
 
     public function stop(): array|null
     {
-        if($this->isRunning()) {
+        if ($this->isRunning()) {
             return null;
         }
-        
+
         $this->process->stop(1);
 
         return [
-            $this->process->getExitCode(), 
-            $this->process->getExitCodeText()
+            $this->process->getExitCode(),
+            $this->process->getExitCodeText(),
         ];
     }
 
@@ -243,5 +243,10 @@ class Server
     public function getConfiguration(): array
     {
         return $this->configuration;
+    }
+
+    public function getProcess(): Process|null
+    {
+        return ($this->process) ? $this->process : null;
     }
 }

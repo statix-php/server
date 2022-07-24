@@ -133,10 +133,10 @@ $server->isRunning(); // true
 
 ### Stopping the server
 
-You may stop the process running the sever by calling the stop command on an instance of the server class. If the server is not currently running this method will return `null` otherwise it will return an array container first the process exit code and second the process exit text.
+You may stop the process running the sever by calling the stop command on an instance of the server class. If the server is not currently running this method will return `null` otherwise it will return an array container first the process exit code and second the process exit text. Note this command can only be called when the server is running in the background.
 
 ```PHP
-$server = Server::new()->start();
+$server = Server::new()->runInBackground();
 
 // do work
 
