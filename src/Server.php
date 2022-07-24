@@ -41,7 +41,7 @@ class Server
      *
      * @param  bool  $running
      */
-    protected bool $running;
+    protected $running = false;
 
     /**
      * The running process
@@ -203,7 +203,7 @@ class Server
         return $process;
     }
 
-    public function start(callable $callback = null): int
+    public function start(): int
     {
         $this->process = $this->initProcess();
 
