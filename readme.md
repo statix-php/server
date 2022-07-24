@@ -122,11 +122,7 @@ $server = Server::new()->withEnvVars([
 
 $server->isRunning(); // false
 
-// or 
-
-$server = Server::new()->withEnvVars([
-    'APP_NAME' => 'statix/server',
-])->start();
+$server->runInBackground();
 
 $server->isRunning(); // true
 ```
