@@ -1,6 +1,6 @@
 # Statix Server
 
-An object oriented wrapper around PHP's built-in server.
+![Banner image](.art/banner.jpg)
 
 ## Requirements
 
