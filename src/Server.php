@@ -36,6 +36,20 @@ class Server
      */
     protected $envVarsToPass;
 
+    /**
+     * Indicator whether or not server is currently running
+     * 
+     * @param bool $running
+     */
+    protected bool $running;
+
+    /**
+     * The running process
+     * 
+     * @param Process $process
+     */
+    protected Process $process;
+
     public static function new(array $configuration = []): self
     {
         return new self($configuration);
@@ -184,24 +198,50 @@ class Server
             }
         });
 
+        $this->running = true;
+
         return $process;
     }
 
-    public function start(): int|null
+    public function start(): self
     {
-        $process = $this->initProcess();
+        $this->process = $this->initProcess();
 
-        while ($process->isRunning()) {
+        while ($this->process->isRunning()) {
             continue;
         }
 
-        return $process->getExitCode();
+        return $this;
     }
 
-    public function runInBackground(): int|null
+    public function runInBackground(): self
     {
-        $process = $this->initProcess();
+        $this->process = $this->initProcess();
 
-        return $process->getExitCode();
+        return $this;
+    }
+
+    public function stop(): array|null
+    {
+        if($this->isRunning()) {
+            return null;
+        }
+        
+        $this->process->stop(1);
+
+        return [
+            $this->process->getExitCode(), 
+            $this->process->getExitCodeText()
+        ];
+    }
+
+    public function isRunning(): bool
+    {
+        return (bool) $this->running;
+    }
+
+    public function getConfiguration(): array
+    {
+        return $this->configuration;
     }
 }

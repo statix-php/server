@@ -111,6 +111,38 @@ You may find it useful to run the server process in the background, you may call
 Server::new()->runInBackground();
 ```
 
+### Checking whether the process is running
+
+You may check whether or not the server is currently running by calling the `isRunning` method.
+
+```PHP
+$server = Server::new()->withEnvVars([
+    'APP_NAME' => 'statix/server',
+]);
+
+$server->isRunning(); // false
+
+// or 
+
+$server = Server::new()->withEnvVars([
+    'APP_NAME' => 'statix/server',
+])->start();
+
+$server->isRunning(); // true
+```
+
+### Stopping the server
+
+You may stop the process running the sever by calling the stop command on an instance of the server class. If the server is not currently running this method will return `null` otherwise it will return an array container first the process exit code and second the process exit text.
+
+```PHP
+$server = Server::new()->start();
+
+// do work
+
+$server->stop();
+```
+
 ## Contributing
 
 #### Installation

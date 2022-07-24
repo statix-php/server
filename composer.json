@@ -20,6 +20,8 @@
     },
     "require-dev": {
         "laravel/pint": "^1.0",
-        "pestphp/pest": "^1.21"
+        "pestphp/pest": "^1.21",
+        "illuminate/http": "^9.21",
+        "guzzlehttp/guzzle": "^7.4"
     }
 }
