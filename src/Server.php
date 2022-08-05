@@ -74,70 +74,6 @@ class Server
         return $this;
     }
 
-    public function usePHP(string $executable): self
-    {
-        if (! is_executable($executable)) {
-            throw new Exception('PHP executable path is not executable: '.$executable);
-        }
-
-        $this->configuration['executable'] = (string) $executable;
-
-        return $this;
-    }
-
-    public function onHost(string $host): self
-    {
-        $this->configuration['host'] = (string) ltrim(ltrim($host, 'http://'), 'https://');
-
-        return $this;
-    }
-
-    public function onPort(mixed $port): self
-    {
-        $this->configuration['port'] = (string) $port;
-
-        return $this;
-    }
-
-    public function root(string $root): self
-    {
-        if (! is_dir($root)) {
-            throw new Exception('Root path is not a directory: '.$root);
-        }
-
-        $this->configuration['root'] = (string) $root;
-
-        return $this;
-    }
-
-    public function output(callable $callback): self
-    {
-        $this->outputHandler = $callback;
-
-        return $this;
-    }
-
-    public function useRouter(string $path): self
-    {
-        if (! file_exists($path)) {
-            throw new Exception('The router file does not exist: '.$path);
-        }
-
-        $this->configuration['router'] = (string) $path;
-
-        return $this;
-    }
-
-    public function withEnvVars(array $vars): self
-    {
-        $this->envVarsToPass = array_merge(
-            $this->envVarsToPass,
-            $vars
-        );
-
-        return $this;
-    }
-
     public function filterEnvVars(callable $callback): self
     {
         $this->envVarsToPass = array_filter(
@@ -156,6 +92,109 @@ class Server
         }
 
         return (new PhpExecutableFinder)->find(false);
+    }
+
+    public function getConfiguration(string $key = null): mixed
+    {
+        if($key != null) {
+            return $this->configuration[$key] ?? null;
+        }
+
+        return $this->configuration;
+    }
+
+    public function getProcess(): Process|null
+    {
+        return ($this->process) ? $this->process : null;
+    }
+
+    public function host(string $host): self
+    {
+        $this->configuration['host'] = (string) ltrim(ltrim($host, 'http://'), 'https://');
+
+        return $this;
+    }
+
+    public function isRunning(): bool
+    {
+        return (bool) $this->running;
+    }
+
+    public function output(callable $callback): self
+    {
+        $this->outputHandler = $callback;
+
+        return $this;
+    }
+
+    public function php(string $executable): self
+    {
+        if (! is_executable($executable)) {
+            throw new Exception('PHP executable path is not executable: '.$executable);
+        }
+
+        $this->configuration['executable'] = (string) $executable;
+
+        return $this;
+    }
+
+    public function port(mixed $port): self
+    {
+        $this->configuration['port'] = (string) $port;
+
+        return $this;
+    }
+
+    public function root(string $root): self
+    {
+        if (! is_dir($root)) {
+            throw new Exception('Root path is not a directory: '.$root);
+        }
+
+        $this->configuration['root'] = (string) $root;
+
+        return $this;
+    }
+
+    public function router(string $path): self
+    {
+        if (! file_exists($path)) {
+            throw new Exception('The router file does not exist: '.$path);
+        }
+
+        $this->configuration['router'] = (string) $path;
+
+        return $this;
+    }
+
+    public function withEnvFile(string $path): self
+    {
+        // todo
+
+        return $this;
+    }
+
+    public function withEnvVars(array $vars): self
+    {
+        $this->envVarsToPass = array_merge(
+            $this->envVarsToPass,
+            $vars
+        );
+
+        return $this;
+    }
+
+    public function withoutEnvVars(array $vars): self
+    {
+        $this->envVarsToPass = array_filter(
+            $this->envVarsToPass,
+            function ($key) use ($vars) {
+                return ! in_array($key, $vars);
+            },
+            ARRAY_FILTER_USE_KEY
+        );
+
+        return $this;
     }
 
     private function buildServeCommand(): array
@@ -210,13 +249,6 @@ class Server
         return $this->process->wait();
     }
 
-    public function runInBackground(): self
-    {
-        $this->process = $this->initProcess();
-
-        return $this;
-    }
-
     public function stop(): array|null
     {
         if ($this->isRunning()) {
@@ -233,18 +265,10 @@ class Server
         ];
     }
 
-    public function isRunning(): bool
+    public function runInBackground(): self
     {
-        return (bool) $this->running;
-    }
+        $this->process = $this->initProcess();
 
-    public function getConfiguration(): array
-    {
-        return $this->configuration;
-    }
-
-    public function getProcess(): Process|null
-    {
-        return ($this->process) ? $this->process : null;
+        return $this;
     }
 }
