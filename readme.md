@@ -80,16 +80,16 @@ You also have the option of calling named methods to set the configuration optio
 use Statix\Server\Server;
 
 Server::new()
-    ->usePHP('path') 
-    ->onHost('localhost') 
-    ->onPort('8080') 
+    ->php('path') 
+    ->host('localhost') 
+    ->port('8080') 
     ->root('./content')
-    ->useRouter('./router.php')
+    ->router('./router.php')
     ->withEnvVars([
         'APP_DYNAMIC_ENV' => 'server'
     ])->withoutEnvVars([
         'APP_KEY',
-    ]);
+    ])->withEnvFile('path/to/.env');
 ```
 
 ### Capturing the output from the server process

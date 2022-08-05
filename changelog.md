@@ -1,5 +1,10 @@
 # Changelog
 
+### 0.3.0
+
+- Renamed methods
+- Added support for `.env` files
+
 ### 0.2.1
 
 - Fix array_filter filtering out all env variables

@@ -139,5 +139,3 @@ test('the getProcess method returns a process instance', function () {
 
     expect($server->getProcess())->toBeInstanceOf(Process::class);
 });
-
-// with env file support

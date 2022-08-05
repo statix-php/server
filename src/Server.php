@@ -2,6 +2,7 @@
 
 namespace Statix\Server;
 
+use Dotenv\Dotenv;
 use Exception;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
@@ -69,7 +70,7 @@ class Server
             'withoutEnvVars' => [],
         ], $configuration);
 
-        $this->envVarsToPass = array_merge($_ENV, getenv());
+        $this->envVarsToPass = array_merge($_ENV, getenv(), $_SERVER);
 
         return $this;
     }
@@ -96,7 +97,7 @@ class Server
 
     public function getConfiguration(string $key = null): mixed
     {
-        if($key != null) {
+        if ($key != null) {
             return $this->configuration[$key] ?? null;
         }
 
@@ -169,7 +170,16 @@ class Server
 
     public function withEnvFile(string $path): self
     {
-        // todo
+        if (! file_exists($path)) {
+            throw new Exception('Given path to env file does not exists: '.$path);
+        }
+
+        (Dotenv::createImmutable(
+            dirname($path),
+            basename($path)
+        ))->safeLoad();
+
+        $this->envVarsToPass = array_merge($_ENV, getenv(), $_SERVER);
 
         return $this;
     }
