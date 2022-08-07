@@ -275,6 +275,17 @@ class Server
         ];
     }
 
+    public function restart(): self
+    {
+        if ($this->isRunning()) {
+            $this->stop();
+        }
+
+        $this->process = $this->initProcess();
+
+        return $this;
+    }
+
     public function runInBackground(): self
     {
         $this->process = $this->initProcess();

@@ -139,6 +139,18 @@ $server = Server::new()->runInBackground();
 $server->stop();
 ```
 
+### Restarting the server
+
+You can restart the server by calling the `restart` method on an instance of the server class. An example of why you might need to restart the server is detecting when your `.env` file is changed, you could restart the server and ensure the env vars are loaded.
+
+```PHP
+$server = Server::new()->runInBackground();
+
+// do work
+
+$server->restart();
+```
+
 ## Contributing
 
 #### Installation
