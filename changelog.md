@@ -1,5 +1,10 @@
 # Changelog
 
+### 0.4.0 
+
+- Added a restart method
+- Updated the banner art
+
 ### 0.3.0
 
 - Renamed methods
