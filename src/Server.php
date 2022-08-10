@@ -64,7 +64,7 @@ class Server
             'host' => 'localhost',
             'port' => 8000,
             'root' => getcwd(),
-            'executable' => null,
+            'php' => null,
             'router' => null,
             'withEnvVars' => [],
             'withoutEnvVars' => [],
@@ -97,11 +97,22 @@ class Server
 
     private function findExecutable(): string
     {
-        if ($this->configuration['executable'] != null) {
-            return $this->configuration['executable'];
+        if ($this->configuration['php'] != null) {
+            return $this->configuration['php'];
         }
 
         return (new PhpExecutableFinder)->find(false);
+    }
+
+    /**
+     * Get the full addess for the server.
+     * Example: http://localhost:8000
+     *
+     * @return  string
+     */
+    public function getAddress(): string
+    {
+        return 'http://'.$this->configuration['host'].':'.$this->configuration['port'];
     }
 
     /**
@@ -172,18 +183,18 @@ class Server
     /**
      * Set the path for the PHP executable.
      *
-     * @param  string  $executable
+     * @param  string  $path
      * @return  self
      *
      * @throws \Exception
      */
-    public function php(string $executable): self
+    public function php(string $path): self
     {
-        if (! is_executable($executable)) {
-            throw new Exception('PHP executable path is not executable: '.$executable);
+        if (! is_executable($path)) {
+            throw new Exception('PHP executable path is not executable: '.$path);
         }
 
-        $this->configuration['executable'] = (string) $executable;
+        $this->configuration['php'] = (string) $path;
 
         return $this;
     }
@@ -237,6 +248,15 @@ class Server
         return $this;
     }
 
+    /**
+     * Load the given .env file and ensure env vars
+     * are passed to server process.
+     *
+     * @param  string  $path
+     * @return  self
+     *
+     * @throws \Exception
+     */
     public function withEnvFile(string $path): self
     {
         if (! file_exists($path)) {
@@ -253,6 +273,13 @@ class Server
         return $this;
     }
 
+    /**
+     * Ensure the given array is passed into env vars for
+     * server process.
+     *
+     * @param  array  $vars
+     * @return  self
+     */
     public function withEnvVars(array $vars): self
     {
         $this->envVarsToPass = array_merge(
@@ -263,6 +290,13 @@ class Server
         return $this;
     }
 
+    /**
+     * Ensure the given array of keys is not present in
+     * the env vars passed to the server process.
+     *
+     * @param  array  $vars
+     * @return  self
+     */
     public function withoutEnvVars(array $vars): self
     {
         $this->envVarsToPass = array_filter(

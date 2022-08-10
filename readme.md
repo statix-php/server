@@ -14,7 +14,7 @@ composer require statix/server
 
 ## Basic Usage
 
-To get started, ensure the vendor autoload script is required and then create an instance of the `Server` class, once you have set any [configuration options](#advanced-usage), you should call the `start` method to start the server. 
+To get started, ensure the vendor autoload script is required and then create an instance of the `Server` class, once you have set any [configuration options](#configuration), you should call the `start` method to start the server. 
 
 ```php
 use Statix\Server\Server;
@@ -28,7 +28,7 @@ Server::new()->start();
 (new Server)->start();
 ```
 
-## Advanced Usage
+## Configuration
 
 You can configure the several options with the server, such as the host, the port, the root directory and more. Please read more below for a detailed explanation of each configuration method.
 
@@ -62,7 +62,7 @@ $optionsSettableViaContructor = [
     'port' => 'string|int', // default: 8000
     'root' => 'string', // default: getcwd()
     'router' => 'string', // path to your routing script
-    'executable' => 'string', // path to the desired PHP binary to use for the server
+    'php' => 'string', // path to the desired PHP binary to use for the server process
     'withEnvVars' => [
         'APP_DYNAMIC_ENV' => 'server'
     ],
@@ -149,6 +149,10 @@ $server = Server::new()->runInBackground();
 // do work
 
 $server->restart();
+
+// do more work
+
+$server->stop();
 ```
 
 ## Contributing
