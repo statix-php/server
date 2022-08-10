@@ -12,42 +12,42 @@ class Server
     /**
      * The user passed configuration array
      *
-     * @param  array  $baseConfiguration
+     * @var  array
      */
     protected $baseConfiguration;
 
     /**
      * The default and user merged configuration array
      *
-     * @param  array  $configuration
+     * @var  array
      */
     protected $configuration;
 
     /**
      * The output handler to pass process output to
      *
-     * @param  callable  $outputHandler
+     * @var  callable
      */
     protected $outputHandler;
 
     /**
      * The env vars which will be passed to the server process
      *
-     * @param  array  $envVarsToPass
+     * @var  array
      */
     protected $envVarsToPass;
 
     /**
      * Indicator whether or not server is currently running
      *
-     * @param  bool  $running
+     * @var  bool
      */
     protected $running = false;
 
     /**
      * The running process
      *
-     * @param  Process  $process
+     * @var  Process
      */
     protected $process = null;
 
@@ -75,6 +75,15 @@ class Server
         return $this;
     }
 
+    /**
+     * Filter out environment variables from getting passed to the
+     * server process. If the callback returns false the variable
+     * will be removed. The callback will recieve the value and
+     * key, in that order.
+     *
+     * @param  callable  $callback
+     * @return  self
+     */
     public function filterEnvVars(callable $callback): self
     {
         $this->envVarsToPass = array_filter(
@@ -95,6 +104,13 @@ class Server
         return (new PhpExecutableFinder)->find(false);
     }
 
+    /**
+     * Retrieve either the entire configuration
+     * array or a specific key.
+     *
+     * @param  string  $key
+     * @return  mixed
+     */
     public function getConfiguration(string $key = null): mixed
     {
         if ($key != null) {
@@ -104,11 +120,24 @@ class Server
         return $this->configuration;
     }
 
+    /**
+     * Retrieve the process once the server is running
+     * in the background, or null before
+     *
+     * @param  string  $key
+     * @return  Process|null
+     */
     public function getProcess(): Process|null
     {
         return ($this->process) ? $this->process : null;
     }
 
+    /**
+     * Set the host for the server.
+     *
+     * @param  string  $host
+     * @return  self
+     */
     public function host(string $host): self
     {
         $this->configuration['host'] = (string) ltrim(ltrim($host, 'http://'), 'https://');
@@ -128,6 +157,14 @@ class Server
         return $this;
     }
 
+    /**
+     * Set the path for the PHP executable.
+     *
+     * @param  string  $executable
+     * @return  self
+     *
+     * @throws \Exception
+     */
     public function php(string $executable): self
     {
         if (! is_executable($executable)) {
@@ -139,6 +176,12 @@ class Server
         return $this;
     }
 
+    /**
+     * Set the port for the server.
+     *
+     * @param  string  $port
+     * @return  self
+     */
     public function port(mixed $port): self
     {
         $this->configuration['port'] = (string) $port;
@@ -146,6 +189,12 @@ class Server
         return $this;
     }
 
+    /**
+     * Set the root directory for the server.
+     *
+     * @param  string  $root
+     * @return  self
+     */
     public function root(string $root): self
     {
         if (! is_dir($root)) {
@@ -157,6 +206,14 @@ class Server
         return $this;
     }
 
+    /**
+     * Set the path to the routing script for the server.
+     *
+     * @param  string  $path
+     * @return  self
+     *
+     * @throws \Exception
+     */
     public function router(string $path): self
     {
         if (! file_exists($path)) {
@@ -252,6 +309,13 @@ class Server
         return $process;
     }
 
+    /**
+     * Start the server and hold script execution
+     * until the script is ended. Will return 
+     * the process exit code. 
+     * 
+     * @return  int
+     */
     public function start(): int
     {
         $this->process = $this->initProcess();
@@ -259,6 +323,14 @@ class Server
         return $this->process->wait();
     }
 
+    /**
+     * Stop the server if running. Will return null if 
+     * the server was not running. Will return an array 
+     * with the exit code and exit code text if 
+     * server was running. 
+     * 
+     * @return  array|null 
+     */
     public function stop(): array|null
     {
         if ($this->isRunning()) {
@@ -275,6 +347,12 @@ class Server
         ];
     }
 
+    /**
+     * Restart the server instance if its already running 
+     * or start the process. 
+     * 
+     * @return  self
+     */
     public function restart(): self
     {
         if ($this->isRunning()) {
@@ -286,6 +364,11 @@ class Server
         return $this;
     }
 
+    /**
+     * Run the server process in the background.
+     * 
+     * @return  self
+     */
     public function runInBackground(): self
     {
         $this->process = $this->initProcess();
