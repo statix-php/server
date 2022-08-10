@@ -12,6 +12,8 @@
 composer require statix/server
 ```
 
+View on packagist: [https://packagist.org/packages/statix/server](https://packagist.org/packages/statix/server)
+
 ## Basic Usage
 
 To get started, ensure the vendor autoload script is required and then create an instance of the `Server` class, once you have set any [configuration options](#configuration), you should call the `start` method to start the server. 
