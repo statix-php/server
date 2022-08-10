@@ -1,5 +1,12 @@
 # Changelog
 
+### 0.4.1
+
+- Fixed / added docblocks
+- Added getAddress public method
+- Updated readme
+- Changed `executable` configuration key to `php` to match named method
+
 ### 0.4.0 
 
 - Added a restart method

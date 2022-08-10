@@ -9,6 +9,11 @@
             "email": "wyatt.castaneda@gmail.com"
         }
     ],
+    "support": {
+        "issues": "https://github.com/statix-php/server/issues",
+        "forum": "https://github.com/statix-php/server/discussions",
+        "chat": "https://discord.gg/yf8BtzS3Qg"
+    },
     "require": {
         "php": ">=8",
         "symfony/process": "^6.0",
