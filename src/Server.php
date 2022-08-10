@@ -145,11 +145,23 @@ class Server
         return $this;
     }
 
+    /**
+     * Determine if the server is running.
+     *
+     * @return  bool
+     */
     public function isRunning(): bool
     {
         return (bool) $this->running;
     }
 
+    /**
+     * Capture the output from the server process
+     * and pass to the given callback
+     *
+     * @param  callable  $callback
+     * @return  self
+     */
     public function output(callable $callback): self
     {
         $this->outputHandler = $callback;
@@ -311,9 +323,9 @@ class Server
 
     /**
      * Start the server and hold script execution
-     * until the script is ended. Will return 
-     * the process exit code. 
-     * 
+     * until the script is ended. Will return
+     * the process exit code.
+     *
      * @return  int
      */
     public function start(): int
@@ -324,12 +336,12 @@ class Server
     }
 
     /**
-     * Stop the server if running. Will return null if 
-     * the server was not running. Will return an array 
-     * with the exit code and exit code text if 
-     * server was running. 
-     * 
-     * @return  array|null 
+     * Stop the server if running. Will return null if
+     * the server was not running. Will return an array
+     * with the exit code and exit code text if
+     * server was running.
+     *
+     * @return  array|null
      */
     public function stop(): array|null
     {
@@ -348,9 +360,9 @@ class Server
     }
 
     /**
-     * Restart the server instance if its already running 
-     * or start the process. 
-     * 
+     * Restart the server instance if its already running
+     * or start the process.
+     *
      * @return  self
      */
     public function restart(): self
@@ -366,7 +378,7 @@ class Server
 
     /**
      * Run the server process in the background.
-     * 
+     *
      * @return  self
      */
     public function runInBackground(): self
