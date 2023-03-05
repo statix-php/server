@@ -1,5 +1,7 @@
 # Statix Server
 
+Statix Server is a PHP package that provides a simple way to configure and start a local PHP server for your web development needs.
+
 ![Banner image](.art/banner.jpg)
 
 ## Requirements
@@ -7,6 +9,8 @@
 - PHP 8 minumum
 
 ## Installation
+
+You can install the package via composer:
 
 ```bash
 composer require statix/server
@@ -16,7 +20,7 @@ View on packagist: [https://packagist.org/packages/statix/server](https://packag
 
 ## Basic Usage
 
-To get started, ensure the vendor autoload script is required and then create an instance of the `Server` class, once you have set any [configuration options](#configuration), you should call the `start` method to start the server. 
+To get started, require the vendor autoload script and create an instance of the `Server` class. After setting any [configuration options](#configuration), call the `start` method to start the server.
 
 ```php
 use Statix\Server\Server;
@@ -74,7 +78,7 @@ $optionsSettableViaContructor = [
 ];
 ```
 
-### Setting configuration via the named methods
+### Setting configuration via named methods
 
 You also have the option of calling named methods to set the configuration options as shown below. 
 

@@ -98,6 +98,97 @@ test('an exception is thrown if the router path does not exist', function () {
     })->toThrow(\Exception::class);
 });
 
+// withEnvFile
+test('the default envFile configuration is null', function () {
+    $server = Server::new();
+
+    expect($server->getConfiguration('envFile'))
+        ->toBeNull();
+});
+
+test('the withEnvFile method sets the path in the config array', function () {
+    $server = Server::new()
+        ->withEnvFile($path = __DIR__ . '\resources\.env.example');
+
+    expect($server->getConfiguration('envFile'))
+        ->toEqual($path);
+});
+
+test('the withEnvFile method throws an exception if the file does not exist', function () {
+    expect(function () {
+        return Server::new()
+            ->withEnvFile($path = __DIR__ . '\resources\.env.fake');
+    })->toThrow(\Exception::class);
+});
+
+test('the withEnvFile method updates the envVarsToPass array', function () {
+    $server = Server::new()
+        ->withEnvFile($path = __DIR__ . '\resources\.env.example');
+
+    $envVars = invade($server)->envVarsToPass;
+
+    expect(array_key_exists('APP_NAME', $envVars))->toBe(true);
+
+    expect($envVars['APP_NAME'])->toEqual('Server');
+});
+
+test('the withEnvFile method exposes the .env file to the process', function () {
+    $url = 'http://localhost:3000';
+
+    $server = Server::new([
+        'root' => './tests/resources',
+        'port' => '3000',
+    ])
+        ->router(__DIR__ . '\resources\router.php')
+        ->withEnvFile(__DIR__ . '\resources\.env.example')
+        ->runInBackground();
+
+    $response = (string) get($url)->body();
+
+    expect($response)->toContain('APP_NAME: Server');
+
+    $server->stop();
+});
+
+test('when the server reloads, the env file is reloaded', function () {
+    $url = 'http://localhost:3000';
+
+    // set the env file to a known state
+    file_put_contents(__DIR__ . '\resources\.env.example', 'APP_NAME="Server"');
+
+    // create the server
+    $server = Server::new([
+        'root' => './tests/resources',
+        'port' => '3000',
+    ])->router(__DIR__ . '\resources\router.php')->withEnvFile(__DIR__ . '\resources\.env.example')->runInBackground();
+
+    // get the response
+    $response = (string) get($url)->body();
+
+    echo $response;
+
+    // check the response
+    expect($response)->toContain('APP_NAME: Server');
+
+    // change the env file
+    file_put_contents(__DIR__ . '\resources\.env.example', 'APP_NAME="Server2"');
+
+    sleep(5);
+
+    // reload the server
+    $server->restart();
+
+    // get the response
+    $response = (string) get($url)->body();
+
+    expect($response)->toContain('APP_NAME: Server2');
+    
+    $server->stop();
+
+    // reset the env file
+    file_put_contents(__DIR__ . '\resources\.env.example', 'APP_NAME="Server"');
+})->only();
+
 // withEnvVars
 test('the default withEnvVars array is null', function () {
     expect(Server::new()->getConfiguration('withEnvVars'))

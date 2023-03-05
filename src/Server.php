@@ -66,6 +66,7 @@ class Server
             'root' => getcwd(),
             'php' => null,
             'router' => null,
+            'envFile' => null,
             'withEnvVars' => [],
             'withoutEnvVars' => [],
         ], $configuration);
@@ -263,12 +264,7 @@ class Server
             throw new Exception('Given path to env file does not exists: '.$path);
         }
 
-        (Dotenv::createImmutable(
-            dirname($path),
-            basename($path)
-        ))->safeLoad();
-
-        $this->envVarsToPass = array_merge($_ENV, getenv(), $_SERVER);
+        $this->configuration['envFile'] = (string) $path;
 
         return $this;
     }
@@ -329,13 +325,29 @@ class Server
 
     private function buildPassingEnvVarArray(): array
     {
-        return array_merge(array_filter($this->envVarsToPass, function ($key) {
+        $passing = [];
+
+        if (($path = $this->configuration['envFile']) != null) {
+            $passing = array_merge($passing, Dotenv::parse(file_get_contents($path)));
+        }
+
+        // remove any keys that are in the withoutEnvVars array
+        $passing = array_filter($passing, function ($key) {
             return ! in_array($key, $this->configuration['withoutEnvVars']);
-        }, ARRAY_FILTER_USE_KEY), $this->configuration['withEnvVars']);
+        }, ARRAY_FILTER_USE_KEY);
+
+        // merge in any keys that are in the withEnvVars array
+        $passing = array_merge($passing, $this->configuration['withEnvVars']);
+
+        return $passing;
     }
 
     private function initProcess(): Process
     {
+        echo array_filter($this->buildPassingEnvVarArray(), function($key) {
+            return $key == 'APP_NAME';
+        }, ARRAY_FILTER_USE_KEY)['APP_NAME'];
+
         $process = new Process(
             $this->buildServeCommand(),
             null,

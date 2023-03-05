@@ -28,6 +28,12 @@
         "laravel/pint": "^1.0",
         "pestphp/pest": "^1.21",
         "illuminate/http": "^9.21",
-        "guzzlehttp/guzzle": "^7.4"
+        "guzzlehttp/guzzle": "^7.4",
+        "spatie/invade": "^1.1"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
     }
 }
