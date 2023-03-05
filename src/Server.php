@@ -344,10 +344,6 @@ class Server
 
     private function initProcess(): Process
     {
-        echo array_filter($this->buildPassingEnvVarArray(), function($key) {
-            return $key == 'APP_NAME';
-        }, ARRAY_FILTER_USE_KEY)['APP_NAME'];
-
         $process = new Process(
             $this->buildServeCommand(),
             null,

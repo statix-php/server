@@ -1,5 +1,10 @@
 # Changelog
 
+### 0.5.0
+
+- Reworked the withEnv file method to clean it up and attempt to fix the issue when reloading env file
+- Revised readme
+
 ### 0.4.1
 
 - Fixed / added docblocks
